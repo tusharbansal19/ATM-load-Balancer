@@ -1,0 +1,5 @@
+2026-01-19 09:53:47,403 - INFO - Withdrawal: \u20b92500 | Breakdown: {500: 5}
+2026-01-19 09:54:51,091 - INFO - Admin added 1000 notes of \u20b9100
+2026-01-19 09:54:57,250 - INFO - Withdrawal: \u20b92000 | Breakdown: {500: 4}
+2026-01-19 09:58:20,036 - WARNING - User Action Failed: Amount must be numeric
+2026-01-19 09:58:20,039 - WARNING - User Action Failed: Amount must be numeric
