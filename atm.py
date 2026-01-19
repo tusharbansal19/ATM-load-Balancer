@@ -71,6 +71,7 @@ class ATM:
             return
         self.cash[denomination] += count
         self.save_state()
+        
         logging.info(f"Admin added {count} notes of ₹{denomination}")
         print(f"Added {count} notes of ₹{denomination}.")
 
@@ -195,6 +196,7 @@ def main():
             break
         else:
             print("Invalid option. Please try again.")
+            
 
 if __name__ == "__main__":
     main()
