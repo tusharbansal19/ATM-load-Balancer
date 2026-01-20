@@ -18,10 +18,16 @@ class ATM:
             with open(self.state_file, "r") as f:
                 data = json.load(f)
                 self.cash = {int(k): v for k, v in data.items()}
+                
+
+                
         except (json.JSONDecodeError, ValueError) as e:
             logging.error(f"Failed to load state: {e}")
             print("Error loading system state. Resetting to default.")
             self.save_state()
+            
+
+
         except IOError as e:
             logging.error(f"IO Error during load: {e}")
             print(f"System Error: {e}")
