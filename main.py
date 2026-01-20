@@ -3,7 +3,6 @@ from atm_core import ATM
 from error_handling import error_manager
 
 def display_status(atm):
-    """Helper to display formatted status."""
     report = atm.get_status_report()
     print("\n--- ATM Status ---")
     for denom, data in report["breakdown"].items():
@@ -36,13 +35,12 @@ def main():
                 amount = int(raw_amt)
                 breakdown = atm.withdraw(amount)
                 
-                print("\n✅ Transaction Successful!")
+                print("\nTransaction Successful!")
                 print("Dispensing:")
                 for denom, count in breakdown.items():
                     print(f"  ₹{denom} x {count}")
                     
             except Exception as e:
-                # Use the new Error Module to handle ANY error here
                 msg = error_manager.handle_user_error(e)
                 print(msg)
 
@@ -62,7 +60,7 @@ def main():
                 count = int(count_input)
                 
                 msg = atm.add_cash(denom, count)
-                print(f"✅ {msg}")
+                print(f"{msg}")
             except Exception as e:
                 msg = error_manager.handle_user_error(e)
                 print(msg)

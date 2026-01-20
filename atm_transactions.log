@@ -3,3 +3,9 @@
 2026-01-19 09:54:57,250 - INFO - Withdrawal: \u20b92000 | Breakdown: {500: 4}
 2026-01-19 09:58:20,036 - WARNING - User Action Failed: Amount must be numeric
 2026-01-19 09:58:20,039 - WARNING - User Action Failed: Amount must be numeric
+2026-01-19 10:14:45,464 - INFO - Withdrawal: \u20b93500 | Breakdown: {100: 10, 200: 10, 500: 1}
+2026-01-19 10:14:55,320 - WARNING - Transaction failed: Amount must be a multiple of 100.
+2026-01-19 10:15:21,804 - INFO - Withdrawal: \u20b92000 | Breakdown: {100: 20}
+2026-01-19 10:15:57,072 - WARNING - Transaction failed: ATM Insufficient funds.
+2026-01-19 10:16:17,477 - INFO - Withdrawal: \u20b920000 | Breakdown: {100: 200}
+2026-01-19 10:16:46,972 - INFO - Withdrawal: \u20b92000 | Breakdown: {500: 4}

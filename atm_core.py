@@ -1,17 +1,15 @@
 import json
 import os
+import logging
 from exceptions import ATMError, InsufficientFundsError, InvalidAmountError
-from error_handling import error_manager
 
 class ATM:
     def __init__(self, state_file="cash_state.json"):
         self.state_file = state_file
-        # Default state
         self.cash = {500: 20, 200: 20, 100: 20}
         self.load_state()
 
     def load_state(self):
-        """Loads cash state from file with error handling."""
         if not os.path.exists(self.state_file):
             self.save_state()
             return
@@ -21,14 +19,14 @@ class ATM:
                 data = json.load(f)
                 self.cash = {int(k): v for k, v in data.items()}
         except (json.JSONDecodeError, ValueError) as e:
-            error_manager.log_system_error("Corrupt state file found. Resetting.", e)
-            print("Notice: System state reset due to file corruption.")
+            logging.error(f"Failed to load state: {e}")
+            print("Error loading system state. Resetting to default.")
             self.save_state()
         except IOError as e:
-            error_manager.log_system_error("IO Error loading state", e)
+            logging.error(f"IO Error during load: {e}")
+            print(f"System Error: {e}")
 
     def save_state(self):
-        """Saves cash state to file securely."""
         try:
             temp_file = self.state_file + ".tmp"
             with open(temp_file, "w") as f:
@@ -38,23 +36,19 @@ class ATM:
                 os.remove(self.state_file)
             os.rename(temp_file, self.state_file)
         except IOError as e:
-            error_manager.log_system_error("Critical: Failed to save state", e)
-            print("Critical Error: Could not save transaction.")
+            logging.error(f"Failed to save state: {e}")
+            print("Critical Error: Could not save transaction state.")
 
     def add_cash(self, denomination, count):
-        """Admin function to add cash."""
         if denomination not in self.cash:
-            raise InvalidAmountError(f"Invalid denomination {denomination}")
-        
+            print("Invalid denomination.")
+            return
         self.cash[denomination] += count
         self.save_state()
-        
-        msg = f"Admin added {count} notes of ₹{denomination}"
-        error_manager.log_transaction(msg)
-        return msg
+        logging.info(f"Admin added {count} notes of ₹{denomination}")
+        print(f"Added {count} notes of ₹{denomination}.")
 
     def get_breakdown(self, amount):
-        """Calculates the best mix of notes using backtracking."""
         denominations = sorted(self.cash.keys(), reverse=True)
         
         def solve(target, idx):
@@ -79,30 +73,32 @@ class ATM:
         return solve(amount, 0)
 
     def withdraw(self, amount):
-        """Core withdrawal logic."""
-        if amount <= 0:
-            raise InvalidAmountError("Amount must be positive.")
-        if amount % 100 != 0:
-            raise InvalidAmountError("Amount must be a multiple of 100.")
+        try:
+            if amount <= 0:
+                raise InvalidAmountError("Amount must be positive.")
+            if amount % 100 != 0:
+                raise InvalidAmountError("Amount must be a multiple of 100.")
 
-        total_balance = sum(k * v for k, v in self.cash.items())
-        if amount > total_balance:
-            raise InsufficientFundsError("ATM Insufficient funds.")
+            total_balance = sum(k * v for k, v in self.cash.items())
+            if amount > total_balance:
+                raise InsufficientFundsError("ATM Insufficient funds.")
 
-        plan = self.get_breakdown(amount)
-        if not plan:
-            raise InsufficientFundsError("Cannot dispense this amount with available notes.")
+            plan = self.get_breakdown(amount)
+            if not plan:
+                raise InsufficientFundsError("Cannot dispense this amount with available denominations.")
 
-        # Execute transaction
-        for denom, count in plan.items():
-            self.cash[denom] -= count
-        
-        self.save_state()
-        error_manager.log_transaction(f"Withdrawal: ₹{amount} | Breakdown: {plan}")
-        return plan
+            for denom, count in plan.items():
+                self.cash[denom] -= count
+            
+            self.save_state()
+            logging.info(f"Withdrawal: ₹{amount} | Breakdown: {plan}")
+            return plan
+
+        except ATMError as e:
+            logging.warning(f"Transaction failed: {e}")
+            raise e
 
     def get_status_report(self):
-        """Returns a formatted status report dictionary."""
         report = {
             "breakdown": {},
             "total": 0
