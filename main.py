@@ -8,7 +8,7 @@ def display_status(atm):
     for denom, data in report["breakdown"].items():
         print(f"₹{denom:<4}: {data['count']} notes = ₹{data['value']}")
     print(f"Total Cash: ₹{report['total']}")
-    print("------------------")
+    print("-----------------")
 
 def main():
     atm = ATM()
